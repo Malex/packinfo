@@ -1,6 +1,9 @@
 import re
 
 class AUTH:
+	auth_parse = re.compile(r"^\s*(\S+)\s*<\s*([^\s@>](?:@|\s+AT\s+)[^>]+)\s*>\s*$",re.M)
+	name_sep = " and "
+	mail_sep = " or "
 
 	def __init__(self,author):
 		self.__n, self.__m = self._parse(author)
@@ -12,10 +15,10 @@ class AUTH:
 			if t:
 				a.append(t.group(1))
 				m.append(t.group(2))
-		return " and ".join(a)," or ".join(m)
+		return self.name_sep.join(a),self.mail_sep.join(m)
 
 	def __get__(self):
-		return '\n'.join((' - '.join(a) for a in zip(self.__n.split(" and "), self.__m.split(" or "))))
+		return '\n'.join((' - '.join(a) for a in zip(self.__n.split(self.name_sep), self.__m.split(self.mail_sep))))
 
 	@property
 	def name(self):
@@ -26,8 +29,6 @@ class AUTH:
 		return self.__m
 
 class INFO:
-	auth_parse = re.compile(r"^\s*([^\s]+)\s+<([^@]+@[^>]+)>\s*$")
-
 	def __init__(self,name,version,desc,author,url):
 		self.__n = name
 		self.__v = version
